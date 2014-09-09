@@ -21,6 +21,13 @@
         var htop = 100;
         var time = "day";
 
+        var speed = 2000;
+
+        var sounds = [];
+
+        var star_num = 0;
+        var max_stars = 5;
+
         var res = "./res/"
         var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
@@ -29,6 +36,7 @@
             game.load.image("moon", "res/moon.png");
             game.load.image("black", "res/black.png");
             game.load.image("grass", "res/grass.png");
+            game.load.image("star", "res/star.png");
         }
 
         function create(){
@@ -51,6 +59,8 @@
             moon.inputEnabled = true;
             moon.events.onInputDown.add(day,this);
 
+            stars = game.add.group();
+
             grass= game.add.sprite(0, height - 45, 'grass');
 
             game.input.onDown.add(gofull, this);
@@ -67,25 +77,56 @@
 
         function night(){
             time = "night";
-            game.add.tween(sun).to({y:height}, 1000, Phaser.Easing.Linear.None, true);
-            game.add.tween(moon).to({y:htop}, 1000, Phaser.Easing.Linear.None, true);
-            game.add.tween(sky).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+            game.add.tween(sun).to({y:height}, speed, Phaser.Easing.Linear.None, true);
+            game.add.tween(moon).to({y:htop}, speed, Phaser.Easing.Linear.None, true);
+            game.add.tween(sky).to( { alpha: 1 }, speed, Phaser.Easing.Linear.None, true);
+            game.add.tween(stars).to( { alpha: 1 }, speed, Phaser.Easing.Linear.None, true);
             console.log(time);
         }
 
         function day(){
             time = "day";
-            game.add.tween(moon).to({y:height}, 1000, Phaser.Easing.Linear.None, true);
-            game.add.tween(sun).to({y:htop}, 1000, Phaser.Easing.Linear.None, true);
-            game.add.tween(sky).to( { alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+            game.add.tween(moon).to({y:height}, speed, Phaser.Easing.Linear.None, true);
+            game.add.tween(sun).to({y:htop}, speed, Phaser.Easing.Linear.None, true);
+            game.add.tween(sky).to( { alpha: 0 }, speed, Phaser.Easing.Linear.None, true);
+            game.add.tween(stars).to( { alpha: 0 }, speed, Phaser.Easing.Linear.None, true);
             console.log(time);
         }
 
         function stars_clouds(){
+            var x = game.input.x;
+            var y = game.input.y;
+
             if(time == "day"){
                 console.log("cloud");
             }else{
-                console.log("star");
+                star_num += 1;
+                if(star_num <= 10){
+                    var star = stars.create(x, y, 'star');
+                    star.name = 'star' + star_num;
+                    star.scale.setTo(.4,.4);
+                    star.anchor.y = .5;
+                    star.anchor.x = .5;
+                    star.rotation = Math.random();
+                    console.log("star");
+                }
+
+                if(star_num == 10){
+                    setTimeout(function(){
+                    for(var i = 0;i<stars.children.length;i++){       
+                        var star = stars.children[i];
+                        game.add.tween(star.scale).to( { x: 0, y: 0 }, speed, Phaser.Easing.Linear.None, true);
+                    }
+                        setTimeout(function(){
+                            for(var i = 0;i<stars.children.length;i++){
+                                stars.children[i].kill();
+                            }
+                            star_num = 0;
+                        },3000);
+                    },3000);
+                }
+                
+                    
             }
         }
     </script>

@@ -37,6 +37,8 @@
             game.load.image("black", "res/black.png");
             game.load.image("grass", "res/grass.png");
             game.load.image("star", "res/star.png");
+
+            game.load.audio('star_die', ['res/stars_die.mp3','res/stars_die.ogg']);
         }
 
         function create(){
@@ -113,10 +115,12 @@
 
                 if(star_num == 10){
                     setTimeout(function(){
-                    for(var i = 0;i<stars.children.length;i++){       
-                        var star = stars.children[i];
-                        game.add.tween(star.scale).to( { x: 0, y: 0 }, speed, Phaser.Easing.Linear.None, true);
-                    }
+                        for(var i = 0;i<stars.children.length;i++){       
+                            var star = stars.children[i];
+                            game.add.tween(star.scale).to( { x: 0, y: 0 }, 1000, Phaser.Easing.Linear.None, true);
+                        }
+                        die = game.add.audio('star_die');
+                        die.play();
                         setTimeout(function(){
                             for(var i = 0;i<stars.children.length;i++){
                                 stars.children[i].kill();

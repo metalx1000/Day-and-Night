@@ -39,6 +39,7 @@
             game.load.image("star", "res/star.png");
 
             game.load.audio('star_die', ['res/stars_die.mp3','res/stars_die.ogg']);
+            game.load.audio('star', ['res/star.mp3','res/star.ogg']);
         }
 
         function create(){
@@ -104,6 +105,8 @@
             }else{
                 star_num += 1;
                 if(star_num <= 10){
+                    var snd = game.add.audio('star');
+                    snd.play();
                     var star = stars.create(x, y, 'star');
                     star.name = 'star' + star_num;
                     star.scale.setTo(.4,.4);
